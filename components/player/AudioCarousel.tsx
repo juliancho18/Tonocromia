@@ -127,6 +127,7 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBac
           className={`a-icon ${current.colors.length > 0 ? "is-done" : ""}`}
           disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "color")}
         >
+          {current.colors.length > 0 && <span className="check-badge">✓</span>}
           <TaskIcon type="color" done={current.colors.length > 0} />
           <span>COLOR</span>
         </button>
@@ -134,6 +135,7 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBac
           className={`a-icon ${current.emotion ? "is-done" : ""}`}
           disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "emotion")}
         >
+          {!!current.emotion && <span className="check-badge">✓</span>}
           <TaskIcon type="emotion" done={!!current.emotion} />
           <span>EMOCIÓN</span>
         </button>
@@ -141,6 +143,7 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBac
           className={`a-icon ${current.texture ? "is-done" : ""}`}
           disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "texture")}
         >
+          {!!current.texture && <span className="check-badge">✓</span>}
           <TaskIcon type="texture" done={!!current.texture} />
           <span>TEXTURA</span>
         </button>

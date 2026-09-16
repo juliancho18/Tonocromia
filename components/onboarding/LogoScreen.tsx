@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SkinToggle } from "@/components/skin/SkinToggle";
 
 export function LogoScreen({ onNext }: { onNext: () => void }) {
   return (
@@ -13,6 +14,7 @@ export function LogoScreen({ onNext }: { onNext: () => void }) {
         </div>
         <p className="onb-subtitle">Escúchalo en colores</p>
         <div className="onb-aura" />
+        <SkinToggle />
       </div>
       <button className="onb-btn" onClick={onNext}>Continuar</button>
       <Link href="/panel" className="admin-link">Panel del investigador</Link>
