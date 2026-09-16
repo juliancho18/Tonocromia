@@ -43,7 +43,7 @@ export function ResultsTab() {
           onKeyDown={e => { if (e.key === "Enter") load(alias); }}
         />
         <button onClick={() => load(alias)}>{loading ? "Cargando…" : "Actualizar"}</button>
-        <a className="secondary" href="/api/admin/results/csv">Exportar CSV</a>
+        <a className="secondary" href="/api/admin/results/excel">Exportar Excel</a>
       </div>
 
       {error && <div className="admin-empty">{error}</div>}
@@ -57,13 +57,18 @@ export function ResultsTab() {
           <div className="pname">{participantAlias}</div>
           {rows.map(r => (
             <div className="frag-result-row" key={r.fragment_id}>
-              <b>{r.fragment_label ?? r.fragment_id}</b>
-              <div className="swatches">
-                {r.colors.map((c, i) => <span key={i} style={{ background: c.hex }} />)}
+              <div className="frag-result-head">
+                <b>{r.fragment_label ?? r.fragment_id}</b>
+                <div className="swatches">
+                  {r.colors.length
+                    ? r.colors.map((c, i) => <span key={i} title={c.hex} style={{ background: c.hex }} />)
+                    : <span className="swatch-empty" title="Sin color" />}
+                </div>
               </div>
-              <span>{r.emotion ?? "—"}</span>
-              <span>·</span>
-              <span>{r.texture ?? "—"}</span>
+              <div className="frag-result-tags">
+                <span className="tag-pill">{r.emotion ?? "—"}</span>
+                <span className="tag-pill">{r.texture ?? "—"}</span>
+              </div>
             </div>
           ))}
         </div>

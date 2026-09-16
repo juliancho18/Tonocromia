@@ -189,12 +189,27 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
   padding: 0 40px; color: var(--muted); font-family: var(--font-label); font-weight: 300; font-size: 14px;
 }
-.audio-icons { display: flex; justify-content: center; gap: 38px; padding: 16px 20px 4px; flex-shrink: 0; }
-.a-icon { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--ink); }
+.audio-icons { display: flex; justify-content: center; gap: 14px; padding: 18px 20px 6px; flex-shrink: 0; }
+.a-icon {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--ink);
+  flex: 1; max-width: 110px; padding: 14px 8px 11px; border-radius: 18px;
+  background: var(--card); border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: transform .18s cubic-bezier(.22,.68,.36,1), box-shadow .18s ease, border-color .18s ease, background .25s ease;
+}
 .a-icon:disabled { opacity: 0.35; }
-.a-icon:active { transform: scale(0.94); }
-.a-icon svg { width: 40px; height: 40px; }
-.a-icon span { font-family: var(--font-label); font-weight: 300; font-size: 9.5px; letter-spacing: 0.09em; }
+.a-icon:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+.a-icon:not(:disabled):active { transform: scale(0.95); }
+.a-icon svg { width: 34px; height: 34px; transition: color .2s ease; }
+.a-icon span { font-family: var(--font-label); font-weight: 400; font-size: 9px; letter-spacing: 0.1em; color: var(--muted); transition: color .2s ease; }
+.a-icon.is-done { background: var(--ink); border-color: var(--ink); box-shadow: 0 6px 16px rgba(0,0,0,0.16); }
+.a-icon.is-done svg, .a-icon.is-done span { color: var(--bg); }
+[data-skin="futurista"] .a-icon { background: rgba(255,255,255,0.03); }
+[data-skin="futurista"] .a-icon.is-done {
+  background: linear-gradient(155deg, var(--accent), var(--accent-2));
+  border-color: transparent; box-shadow: 0 6px 22px rgba(139,92,246,0.4);
+}
+[data-skin="futurista"] .a-icon.is-done svg, [data-skin="futurista"] .a-icon.is-done span { color: #0a0a10; }
 .audio-track { flex: 1; position: relative; touch-action: none; min-height: 0; overflow: hidden; }
 .audio-circle {
   position: absolute; top: 50%; left: 50%; border-radius: 50%;
@@ -411,7 +426,18 @@ input[type=range].vslider { width: 140px; transform: rotate(-90deg); accent-colo
 }
 .participant-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
 .participant-card .pname { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-.frag-result-row { font-size: 12.5px; color: var(--muted); padding: 6px 0; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.frag-result-row { font-size: 12.5px; color: var(--muted); padding: 10px 0; border-top: 1px solid var(--line); }
 .frag-result-row:first-of-type { border-top: none; }
-.frag-result-row .swatches { display: flex; gap: 3px; }
-.frag-result-row .swatches span { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid var(--line); }
+.frag-result-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.frag-result-head b { color: var(--ink); font-size: 13px; }
+.frag-result-row .swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+.frag-result-row .swatches span {
+  width: 22px; height: 22px; border-radius: 7px; display: inline-block;
+  border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.frag-result-row .swatch-empty { background: var(--line); border-style: dashed; box-shadow: none; }
+.frag-result-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-pill {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 11px; font-size: 11.5px; color: var(--ink); font-weight: 500;
+}

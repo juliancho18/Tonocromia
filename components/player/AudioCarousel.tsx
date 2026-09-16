@@ -123,15 +123,24 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBac
         <div>AUDIO</div>
       </div>
       <div className="audio-icons">
-        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "color")}>
+        <button
+          className={`a-icon ${current.colors.length > 0 ? "is-done" : ""}`}
+          disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "color")}
+        >
           <TaskIcon type="color" done={current.colors.length > 0} />
           <span>COLOR</span>
         </button>
-        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "emotion")}>
+        <button
+          className={`a-icon ${current.emotion ? "is-done" : ""}`}
+          disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "emotion")}
+        >
           <TaskIcon type="emotion" done={!!current.emotion} />
           <span>EMOCIÓN</span>
         </button>
-        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "texture")}>
+        <button
+          className={`a-icon ${current.texture ? "is-done" : ""}`}
+          disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "texture")}
+        >
           <TaskIcon type="texture" done={!!current.texture} />
           <span>TEXTURA</span>
         </button>
