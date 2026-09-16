@@ -1,8 +1,11 @@
 "use client";
 
-export function IntroScreen({ fragmentCount, onNext }: { fragmentCount: number; onNext: () => void }) {
+export function IntroScreen({
+  fragmentCount, onNext, onBack,
+}: { fragmentCount: number; onNext: () => void; onBack: () => void }) {
   return (
     <div className="onb">
+      <button className="onb-back-btn" onClick={onBack} aria-label="Volver">←</button>
       <div />
       <div className="onb-mid">
         <div className="logo">

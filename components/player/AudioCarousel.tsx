@@ -11,6 +11,7 @@ interface AudioCarouselProps {
   responses: FragmentResponse[];
   onOpenPanel: (fragIndex: number, type: "color" | "emotion" | "texture") => void;
   onSend: () => void;
+  onBack: () => void;
   sending: boolean;
 }
 
@@ -19,7 +20,7 @@ function getUnit() {
   return w * 0.66;
 }
 
-export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sending }: AudioCarouselProps) {
+export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBack, sending }: AudioCarouselProps) {
   const n = fragments.length;
   const [focal, setFocal] = useState(0);
   const [displayedIndex, setDisplayedIndex] = useState(0);
@@ -117,6 +118,7 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sendi
   return (
     <div className="audio-carousel">
       <div className="audio-header">
+        <button className="audio-back-btn" onClick={onBack} aria-label="Volver">←</button>
         <div>{hasFragments ? `${displayedIndex + 1}/${n}` : "0/0"}</div>
         <div>AUDIO</div>
       </div>

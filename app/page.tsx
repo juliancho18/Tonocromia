@@ -57,11 +57,18 @@ export default function ParticipantPage() {
     return (
       <AliasScreen
         onNext={a => { setAlias(a); setScreen("intro"); }}
+        onBack={() => setScreen("logo")}
       />
     );
   }
   if (screen === "intro") {
-    return <IntroScreen fragmentCount={fragments.length} onNext={() => setScreen("flow")} />;
+    return (
+      <IntroScreen
+        fragmentCount={fragments.length}
+        onNext={() => setScreen("flow")}
+        onBack={() => setScreen("apodo")}
+      />
+    );
   }
   if (screen === "thanks") return <ThanksScreen />;
 
@@ -72,6 +79,7 @@ export default function ParticipantPage() {
         responses={responses}
         onOpenPanel={(fragIndex, type) => setOpenPanel({ fragIndex, type })}
         onSend={handleSend}
+        onBack={() => setScreen("intro")}
         sending={sending}
       />
       <Sheet

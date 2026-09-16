@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function AliasScreen({ onNext }: { onNext: (alias: string) => void }) {
+export function AliasScreen({ onNext, onBack }: { onNext: (alias: string) => void; onBack: () => void }) {
   const [alias, setAlias] = useState("");
   const [error, setError] = useState(false);
 
@@ -14,6 +14,7 @@ export function AliasScreen({ onNext }: { onNext: (alias: string) => void }) {
 
   return (
     <div className="onb">
+      <button className="onb-back-btn" onClick={onBack} aria-label="Volver">←</button>
       <div />
       <div className="onb-mid" style={{ width: "100%", alignItems: "center" }}>
         <h1>¡Bienvenido!</h1>

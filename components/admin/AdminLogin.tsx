@@ -23,6 +23,7 @@ export function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div className="onb">
+      <Link href="/" className="onb-back-btn" aria-label="Volver">←</Link>
       <div />
       <div className="onb-mid" style={{ width: "100%", alignItems: "center" }}>
         <h1>Panel del investigador</h1>
@@ -35,7 +36,6 @@ export function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
         {error && <div className="error-text">Contraseña incorrecta.</div>}
       </div>
       <button className="onb-btn" onClick={submit} disabled={loading}>Entrar</button>
-      <Link href="/" className="admin-link">Volver</Link>
     </div>
   );
 }
