@@ -32,7 +32,10 @@ export async function transcodeAndProbe(input: Buffer): Promise<TranscodeResult>
     stream.on("error", reject);
   });
 
-  const durationMs = Math.round((await probeDurationSeconds(buffer)) * 1000);
+  // Re-probing the transcoded buffer is unreliable: a raw ADTS AAC stream has
+  // no container-level duration metadata, so ffprobe can report "N/A" (=> NaN)
+  // for it. Transcoding doesn't change duration, so reuse the source's.
+  const durationMs = Math.round(probedSeconds * 1000);
   return { buffer, durationMs, contentType: "audio/aac" };
 }
 
@@ -41,7 +44,8 @@ function probeDurationSeconds(input: Buffer): Promise<number> {
     const stream = Readable.from(input);
     ffmpeg.ffprobe(stream as unknown as string, (err, data) => {
       if (err) return reject(err);
-      resolve(data.format.duration ?? 0);
+      const duration = Number(data.format.duration);
+      resolve(Number.isFinite(duration) ? duration : 0);
     });
   });
 }
