@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signSession } from "@/lib/auth";
+import { signSession, SESSION_TTL_MS } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   const { password } = await req.json();
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 8,
+    maxAge: SESSION_TTL_MS / 1000,
   });
   return res;
 }
