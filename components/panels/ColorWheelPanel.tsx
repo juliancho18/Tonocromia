@@ -74,16 +74,19 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
       <div className="sheet-title">RUEDA CROMÁTICA</div>
       <div className="color-panel-body">
         <div className="wheel-row">
-          <canvas
-            id="wheel"
-            ref={canvasRef}
-            width={150}
-            height={150}
-            onPointerDown={e => { draggingRef.current = true; pick(e.clientX, e.clientY); }}
-            onPointerMove={e => { if (draggingRef.current) pick(e.clientX, e.clientY); }}
-            onPointerUp={() => { draggingRef.current = false; }}
-          />
+          <div className="wheel-glow">
+            <canvas
+              id="wheel"
+              ref={canvasRef}
+              width={150}
+              height={150}
+              onPointerDown={e => { draggingRef.current = true; pick(e.clientX, e.clientY); }}
+              onPointerMove={e => { if (draggingRef.current) pick(e.clientX, e.clientY); }}
+              onPointerUp={() => { draggingRef.current = false; }}
+            />
+          </div>
           <div className="vslider-wrap">
+            <label>Luz</label>
             <input
               type="range" className="vslider" min={0} max={100} value={picker.light}
               onChange={e => setPicker(p => ({ ...p, light: Number(e.target.value) }))}
@@ -91,18 +94,21 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
           </div>
         </div>
         <div className="swatch-preview-row">
-          <div className="swatch-preview" style={{ background: hex }} />
+          <div className="swatch-preview" style={{ background: hex, boxShadow: `0 6px 20px ${hex}66` }} />
           <div className="hint-text">toca la rueda para elegir un color</div>
         </div>
         <button className="add-color-btn" disabled={colors.length >= MAX_COLORS} onClick={addColor}>
-          {colors.length >= MAX_COLORS ? `Ya elegiste ${MAX_COLORS} colores` : "Agregar color a la paleta"}
+          {colors.length >= MAX_COLORS ? `Ya elegiste ${MAX_COLORS} colores` : "+ Agregar color a la paleta"}
         </button>
         <div className="palette-label">Tu paleta para este fragmento ({colors.length}/{MAX_COLORS})</div>
         <div className="chosen-row">
           {colors.map((c, i) => (
-            <div className="chip" key={i} style={{ background: c.hex }}>
+            <div className="chip" key={i} style={{ background: c.hex, boxShadow: `0 4px 14px ${c.hex}55` }}>
               <button className="rm" onClick={() => removeColor(i)}>✕</button>
             </div>
+          ))}
+          {Array.from({ length: MAX_COLORS - colors.length }).map((_, i) => (
+            <div className="chip chip-empty" key={`empty-${i}`} />
           ))}
         </div>
       </div>
