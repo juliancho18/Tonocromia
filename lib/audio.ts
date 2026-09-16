@@ -12,9 +12,13 @@ export interface TranscodeResult {
   contentType: string;
 }
 
-// Transcodes to a mono AAC/ADTS stream at a bitrate that scales down for
-// longer sources, so a single heavy upload can't blow past the app's
-// 10-minute total audio budget on its own.
+// Transcodes to mono MP3 at a bitrate that scales down for longer sources, so
+// a single heavy upload can't blow past the app's 10-minute total audio
+// budget on its own. MP3 (not raw AAC/ADTS) is deliberate: Firefox has no
+// decoder for a bare ADTS elementary stream outside an MP4 container, so
+// fragments transcoded to it played back silently there — MP3 plays
+// everywhere <audio> is supported, including on the mobile browsers this app
+// targets.
 export async function transcodeAndProbe(input: Buffer): Promise<TranscodeResult> {
   const probedSeconds = await probeDurationSeconds(input);
   const bitrate = probedSeconds > 120 ? "48k" : "64k";
@@ -24,7 +28,8 @@ export async function transcodeAndProbe(input: Buffer): Promise<TranscodeResult>
     const stream = ffmpeg(Readable.from(input))
       .audioChannels(1)
       .audioBitrate(bitrate)
-      .format("adts")
+      .audioCodec("libmp3lame")
+      .format("mp3")
       .on("error", reject)
       .pipe();
     stream.on("data", (chunk: Buffer) => chunks.push(chunk));
@@ -32,11 +37,11 @@ export async function transcodeAndProbe(input: Buffer): Promise<TranscodeResult>
     stream.on("error", reject);
   });
 
-  // Re-probing the transcoded buffer is unreliable: a raw ADTS AAC stream has
-  // no container-level duration metadata, so ffprobe can report "N/A" (=> NaN)
-  // for it. Transcoding doesn't change duration, so reuse the source's.
+  // Re-probing the transcoded buffer is unreliable for headerless streams in
+  // general, so duration is carried over from the source instead — transcoding
+  // doesn't change it.
   const durationMs = Math.round(probedSeconds * 1000);
-  return { buffer, durationMs, contentType: "audio/aac" };
+  return { buffer, durationMs, contentType: "audio/mpeg" };
 }
 
 function probeDurationSeconds(input: Buffer): Promise<number> {

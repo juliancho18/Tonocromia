@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   }
 
   const id = randomUUID();
-  const blob = await put(`fragments/${id}.aac`, buffer, {
+  const blob = await put(`fragments/${id}.mp3`, buffer, {
     access: "public",
     contentType,
   });
