@@ -6,6 +6,10 @@ import { wouldExceedLimit } from "@/lib/duration";
 import { verifySession } from "@/lib/auth";
 import { randomUUID } from "crypto";
 
+// Transcoding a longer fragment can take a while; give the function more
+// room than the Next.js/Vercel default before it gets killed mid-upload.
+export const maxDuration = 60;
+
 function requireAdmin(req: NextRequest) {
   const token = req.cookies.get("tonocromia_admin")?.value;
   return !!token && verifySession(token, process.env.ADMIN_SESSION_SECRET!);
@@ -22,18 +26,35 @@ export async function POST(req: NextRequest) {
   if (!requireAdmin(req)) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   await ensureSchema();
 
-  const form = await req.formData();
-  const file = form.get("file") as File | null;
-  if (!file) return NextResponse.json({ error: "Falta el archivo de audio." }, { status: 400 });
-  const label = String(form.get("label") ?? file.name);
-  const inputBuffer = Buffer.from(await file.arrayBuffer());
+  const { blobUrl, label: rawLabel } = (await req.json()) as { blobUrl?: string; label?: string };
+  if (!blobUrl || typeof blobUrl !== "string") {
+    return NextResponse.json({ error: "Falta el audio subido." }, { status: 400 });
+  }
+  const label = String(rawLabel ?? "audio");
 
-  const { buffer, durationMs, contentType } = await transcodeAndProbe(inputBuffer);
+  const sourceRes = await fetch(blobUrl);
+  if (!sourceRes.ok) {
+    return NextResponse.json({ error: "No se pudo leer el audio subido." }, { status: 400 });
+  }
+  const inputBuffer = Buffer.from(await sourceRes.arrayBuffer());
+
+  let transcoded;
+  try {
+    transcoded = await transcodeAndProbe(inputBuffer);
+  } catch {
+    await del(blobUrl).catch(() => {});
+    return NextResponse.json(
+      { error: "No se pudo procesar el audio. Verifica que el archivo sea un formato de audio válido." },
+      { status: 422 },
+    );
+  }
+  const { buffer, durationMs, contentType } = transcoded;
 
   const { rows: activeRows } = await sql<{ duration_ms: number }>`
     select duration_ms from fragments where active = true
   `;
   if (wouldExceedLimit(activeRows.map(r => r.duration_ms), durationMs)) {
+    await del(blobUrl).catch(() => {});
     return NextResponse.json(
       { error: "Este audio superaría el límite de 10 minutos totales activos." },
       { status: 422 },
@@ -45,6 +66,7 @@ export async function POST(req: NextRequest) {
     access: "public",
     contentType,
   });
+  await del(blobUrl).catch(() => {});
 
   const { rows: maxOrder } = await sql<{ m: number }>`select coalesce(max(order_index), -1) as m from fragments`;
   await sql`

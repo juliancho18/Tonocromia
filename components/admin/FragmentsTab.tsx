@@ -1,8 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import type { AdminFragment } from "@/lib/types";
 import { MAX_TOTAL_DURATION_MS } from "@/lib/duration";
+import { MAX_UPLOAD_SIZE_BYTES, isAllowedAudioFile } from "@/lib/constants";
+
+function formatMb(bytes: number): string {
+  return `${(bytes / (1024 * 1024)).toFixed(0)}MB`;
+}
 
 function formatMs(ms: number): string {
   const totalSeconds = Math.round(ms / 1000);
@@ -16,6 +22,8 @@ export function FragmentsTab() {
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
+  const [uploadStage, setUploadStage] = useState<"idle" | "uploading" | "processing">("idle");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const load = useCallback(async () => {
@@ -72,19 +80,47 @@ export function FragmentsTab() {
   }
 
   async function uploadFile(file: File) {
-    setUploading(true);
     setError("");
-    const form = new FormData();
-    form.append("file", file);
-    form.append("label", file.name.replace(/\.[^.]+$/, ""));
-    const res = await fetch("/api/admin/fragments", { method: "POST", body: form });
-    setUploading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "No se pudo subir el audio.");
+
+    if (!isAllowedAudioFile(file)) {
+      setError("Formato no soportado. Sube un archivo de audio (mp3, wav, m4a, aac, ogg, flac…).");
       return;
     }
-    load();
+    if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+      setError(`El archivo pesa demasiado. El máximo permitido es ${formatMb(MAX_UPLOAD_SIZE_BYTES)}.`);
+      return;
+    }
+
+    setUploading(true);
+    setUploadStage("uploading");
+    setUploadPct(0);
+    try {
+      const label = file.name.replace(/\.[^.]+$/, "");
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/fragments/blob-upload",
+        onUploadProgress: ({ percentage }) => setUploadPct(percentage),
+      });
+
+      setUploadStage("processing");
+      const res = await fetch("/api/admin/fragments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ blobUrl: blob.url, label }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "No se pudo procesar el audio.");
+        return;
+      }
+      load();
+    } catch {
+      setError("No se pudo subir el audio. Revisa tu conexión e intenta de nuevo.");
+    } finally {
+      setUploading(false);
+      setUploadStage("idle");
+      setUploadPct(0);
+    }
   }
 
   return (
@@ -107,20 +143,25 @@ export function FragmentsTab() {
           </div>
         </div>
         <div
-          className={`dropzone ${dragging ? "dragging" : ""}`}
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={e => { e.preventDefault(); setDragging(true); }}
+          className={`dropzone ${dragging ? "dragging" : ""} ${uploading ? "disabled" : ""}`}
+          onClick={() => { if (!uploading) fileInputRef.current?.click(); }}
+          onDragOver={e => { e.preventDefault(); if (!uploading) setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={e => {
             e.preventDefault();
             setDragging(false);
+            if (uploading) return;
             const file = e.dataTransfer.files?.[0];
             if (file) uploadFile(file);
           }}
         >
-          {uploading ? "Subiendo y comprimiendo…" : "Arrastra un audio aquí, o toca para elegir un archivo"}
+          {uploading
+            ? uploadStage === "uploading"
+              ? `Subiendo… ${Math.round(uploadPct)}%`
+              : "Procesando y comprimiendo audio…"
+            : "Arrastra un audio aquí, o toca para elegir un archivo"}
           <input
-            ref={fileInputRef} type="file" accept="audio/*"
+            ref={fileInputRef} type="file" accept="audio/*" disabled={uploading}
             onChange={e => { const file = e.target.files?.[0]; if (file) uploadFile(file); e.target.value = ""; }}
           />
         </div>

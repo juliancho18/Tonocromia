@@ -14,6 +14,7 @@ export interface AdminResultRow {
   alias: string;
   submitted_at: string;
   fragment_id: string;
+  fragment_label: string | null;
   colors: ColorEntry[];
   emotion: string | null;
   texture: string | null;
