@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import type { AdminFragment } from "@/lib/types";
 import { MAX_TOTAL_DURATION_MS } from "@/lib/duration";
-import { MAX_UPLOAD_SIZE_BYTES, isAllowedAudioFile } from "@/lib/constants";
+import { MAX_UPLOAD_SIZE_BYTES, isAllowedAudioFile, resolveAudioContentType } from "@/lib/constants";
 
 function formatMb(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(0)}MB`;
@@ -83,7 +83,7 @@ export function FragmentsTab() {
     setError("");
 
     if (!isAllowedAudioFile(file)) {
-      setError("Formato no soportado. Sube un archivo de audio (mp3, wav, m4a, aac, ogg, flac…).");
+      setError("Formato no soportado. Sube un archivo de audio (mp3, wav, m4a, aac, ogg, oga, flac, webm, opus…).");
       return;
     }
     if (file.size > MAX_UPLOAD_SIZE_BYTES) {
@@ -98,6 +98,7 @@ export function FragmentsTab() {
       const label = file.name.replace(/\.[^.]+$/, "");
       const blob = await upload(file.name, file, {
         access: "public",
+        contentType: resolveAudioContentType(file),
         handleUploadUrl: "/api/admin/fragments/blob-upload",
         onUploadProgress: ({ percentage }) => setUploadPct(percentage),
       });
