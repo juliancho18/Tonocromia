@@ -109,6 +109,18 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sendi
   const incompleteCount = responses.filter(r => !isResponseComplete(r)).length;
   const current = responses[displayedIndex];
 
+  if (n === 0 || !current) {
+    return (
+      <div className="audio-carousel">
+        <div className="audio-header">
+          <div>0/0</div>
+          <div>AUDIO</div>
+        </div>
+        <div className="audio-empty">Todavía no hay fragmentos de audio cargados. Vuelve a intentarlo más tarde.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="audio-carousel">
       <div className="audio-header">
