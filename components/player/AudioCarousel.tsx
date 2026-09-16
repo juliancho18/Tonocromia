@@ -104,39 +104,32 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sendi
     setScrubPct(pct * 100);
   }
 
-  const isLast = displayedIndex === n - 1;
-  const allDone = responses.every(isResponseComplete);
+  const hasFragments = n > 0;
+  const isLast = hasFragments && displayedIndex === n - 1;
+  const allDone = hasFragments && responses.every(isResponseComplete);
   const incompleteCount = responses.filter(r => !isResponseComplete(r)).length;
-  const current = responses[displayedIndex];
-
-  if (n === 0 || !current) {
-    return (
-      <div className="audio-carousel">
-        <div className="audio-header">
-          <div>0/0</div>
-          <div>AUDIO</div>
-        </div>
-        <div className="audio-empty">Todavía no hay fragmentos de audio cargados. Vuelve a intentarlo más tarde.</div>
-      </div>
-    );
-  }
+  // Falls back to an empty response shape instead of crashing whenever
+  // `responses` hasn't caught up with `fragments` yet (e.g. right after the
+  // initial fetch, or if the two ever get out of sync) — the shell below
+  // always renders, only the interactive bits are disabled when empty.
+  const current = responses[displayedIndex] ?? { fragmentId: "", colors: [], emotion: null, texture: null };
 
   return (
     <div className="audio-carousel">
       <div className="audio-header">
-        <div>{displayedIndex + 1}/{n}</div>
+        <div>{hasFragments ? `${displayedIndex + 1}/${n}` : "0/0"}</div>
         <div>AUDIO</div>
       </div>
       <div className="audio-icons">
-        <button className="a-icon" onClick={() => onOpenPanel(displayedIndex, "color")}>
+        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "color")}>
           <TaskIcon type="color" done={current.colors.length > 0} />
           <span>COLOR</span>
         </button>
-        <button className="a-icon" onClick={() => onOpenPanel(displayedIndex, "emotion")}>
+        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "emotion")}>
           <TaskIcon type="emotion" done={!!current.emotion} />
           <span>EMOCIÓN</span>
         </button>
-        <button className="a-icon" onClick={() => onOpenPanel(displayedIndex, "texture")}>
+        <button className="a-icon" disabled={!hasFragments} onClick={() => onOpenPanel(displayedIndex, "texture")}>
           <TaskIcon type="texture" done={!!current.texture} />
           <span>TEXTURA</span>
         </button>
@@ -144,35 +137,39 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sendi
       <div
         ref={trackRef}
         className="audio-track"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
+        onPointerDown={hasFragments ? onPointerDown : undefined}
+        onPointerMove={hasFragments ? onPointerMove : undefined}
+        onPointerUp={hasFragments ? endDrag : undefined}
+        onPointerCancel={hasFragments ? endDrag : undefined}
       >
-        {fragments.map((f, i) => {
-          const d = i - focal;
-          const ad = Math.min(1, Math.abs(d));
-          return (
-            <AudioCircle
-              key={f.id}
-              index={i}
-              size={circleSize}
-              translateX={d * getUnit()}
-              scale={1 - 0.48 * ad}
-              colorMix={ad}
-              isFocal={i === displayedIndex}
-              settling={settling}
-              hasAudio={!!f.audio_url}
-              audioSrc={f.audio_url}
-              registerAudioEl={registerAudioEl}
-              isPlaying={i === displayedIndex && isPlaying}
-              onEnded={() => setIsPlaying(false)}
-              onTimeUpdate={el => {
-                if (i === displayedIndex && el.duration) setScrubPct((el.currentTime / el.duration) * 100);
-              }}
-            />
-          );
-        })}
+        {hasFragments ? (
+          fragments.map((f, i) => {
+            const d = i - focal;
+            const ad = Math.min(1, Math.abs(d));
+            return (
+              <AudioCircle
+                key={f.id}
+                index={i}
+                size={circleSize}
+                translateX={d * getUnit()}
+                scale={1 - 0.48 * ad}
+                colorMix={ad}
+                isFocal={i === displayedIndex}
+                settling={settling}
+                hasAudio={!!f.audio_url}
+                audioSrc={f.audio_url}
+                registerAudioEl={registerAudioEl}
+                isPlaying={i === displayedIndex && isPlaying}
+                onEnded={() => setIsPlaying(false)}
+                onTimeUpdate={el => {
+                  if (i === displayedIndex && el.duration) setScrubPct((el.currentTime / el.duration) * 100);
+                }}
+              />
+            );
+          })
+        ) : (
+          <div className="audio-empty">Todavía no hay fragmentos de audio cargados. Vuelve a intentarlo más tarde.</div>
+        )}
       </div>
       {isLast && (
         <div className="audio-send-wrap">
@@ -188,13 +185,13 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, sendi
         <div
           id="audio-scrub"
           className="audio-scrub"
-          onPointerDown={e => seekFromClientX(e.clientX)}
-          onPointerMove={e => { if (e.buttons === 1) seekFromClientX(e.clientX); }}
+          onPointerDown={e => hasFragments && seekFromClientX(e.clientX)}
+          onPointerMove={e => { if (hasFragments && e.buttons === 1) seekFromClientX(e.clientX); }}
         >
           <div className="audio-scrub-fill" style={{ width: `${scrubPct}%` }} />
           <div className="audio-scrub-dot" style={{ left: `${scrubPct}%` }} />
         </div>
-        <button className="audio-playpause" onClick={togglePlay}>
+        <button className="audio-playpause" disabled={!hasFragments} onClick={togglePlay}>
           {isPlaying ? "II" : "▶"}
         </button>
       </div>
