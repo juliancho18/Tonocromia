@@ -42,8 +42,12 @@ export function ResultsTab() {
           onChange={e => setAlias(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter") load(alias); }}
         />
-        <button onClick={() => load(alias)}>{loading ? "Cargando…" : "Actualizar"}</button>
-        <a className="secondary" href="/api/admin/results/excel">Exportar Excel</a>
+        <button className="pill-btn" onClick={() => load(alias)}>
+          <span aria-hidden="true">↻</span> {loading ? "Cargando…" : "Actualizar"}
+        </button>
+        <a className="pill-btn secondary" href="/api/admin/results/excel">
+          <span aria-hidden="true">⭳</span> Exportar Excel
+        </a>
       </div>
 
       {error && <div className="admin-empty">{error}</div>}

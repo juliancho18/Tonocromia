@@ -180,7 +180,10 @@ export function FragmentsTab() {
               onBlur={e => patch(f.id, { label: e.target.value })}
             />
             <span className="tag">
-              {f.audio_url ? `audio cargado · ${formatMs(f.duration_ms)}` : "sin audio todavía"} · {f.active ? "activo" : "inactivo"}
+              {f.audio_url ? `audio cargado · ${formatMs(f.duration_ms)}` : "sin audio todavía"}
+              <span className={`status-pill ${f.active ? "on" : ""}`}>
+                <span className="status-dot" /> {f.active ? "Activo" : "Inactivo"}
+              </span>
             </span>
           </div>
           <div className="reorder-btns">

@@ -63,6 +63,11 @@ export function AudioCircle({
     };
   }, [index, isFocal]);
 
+  // Routing an <audio> element through createMediaElementSource silently mutes
+  // it if the element is cross-origin (fragments are served from Vercel Blob's
+  // own domain) and wasn't fetched in CORS mode — the element still "plays"
+  // (duration/progress update normally) but produces no sound. crossOrigin on
+  // the <audio> tag above is what keeps it un-tainted for the Web Audio graph.
   function ensureAnalyser() {
     const audio = audioRef.current;
     if (!audio) return;
@@ -118,6 +123,7 @@ export function AudioCircle({
         <audio
           ref={audioRef}
           preload="metadata"
+          crossOrigin="anonymous"
           src={audioSrc}
           onEnded={onEnded}
           onTimeUpdate={e => onTimeUpdate(e.currentTarget)}

@@ -513,7 +513,17 @@ input[type=range].vslider::-moz-range-thumb {
   background: var(--glass); color: var(--ink); font-size: 14px; transition: border-color .2s ease;
 }
 .frag-manage-label input:focus { outline: none; border-color: var(--accent-2); }
-.frag-manage-label .tag { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.frag-manage-label .tag {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 11.5px; color: var(--muted); margin-top: 4px;
+}
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px 2px 7px; border-radius: 999px;
+  background: var(--glass-strong); color: var(--muted); font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+.status-pill.on { background: rgba(74, 222, 128, 0.14); color: #4ade80; }
+.status-pill.on .status-dot { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
 .reorder-btns { display: flex; gap: 4px; }
 .reorder-btns button {
   width: 28px; height: 28px; border-radius: 8px; background: var(--glass-strong); color: var(--ink);
@@ -530,13 +540,21 @@ input[type=range].vslider::-moz-range-thumb {
 .frag-delete-btn { color: var(--danger); font-size: 12.5px; }
 
 .results-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-.results-toolbar button, .results-toolbar a {
-  flex: 1; padding: 12px; border-radius: 12px; font-size: 13.5px; font-weight: 600; text-align: center;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: var(--accent-ink); display: block;
-  box-shadow: 0 6px 16px rgba(var(--accent-rgb), 0.3); transition: transform .15s ease, box-shadow .15s ease;
+.results-toolbar .pill-btn { flex: 1; }
+
+/* Reusable "dashboard" pill button: a soft-tinted, outlined chip with an icon
+   — the compact look, not the tall full-bleed CTA bars used for onboarding. */
+.pill-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; text-align: center;
+  background: rgba(var(--accent-2-rgb), 0.1); color: var(--accent-2);
+  border: 1px solid rgba(var(--accent-2-rgb), 0.4);
+  transition: background .2s ease, border-color .2s ease, transform .15s ease;
 }
-.results-toolbar button:active, .results-toolbar a:active { transform: scale(0.98); }
-.results-toolbar .secondary { background: var(--glass-strong); color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+.pill-btn:hover { background: rgba(var(--accent-2-rgb), 0.18); }
+.pill-btn:active { transform: scale(0.97); }
+.pill-btn.secondary { background: var(--glass-strong); color: var(--ink); border-color: var(--line); }
+.pill-btn.secondary:hover { background: var(--glass); border-color: var(--accent-2); }
 .results-search {
   flex: 2 1 160px; min-width: 0; padding: 12px 14px; border-radius: 12px; font-size: 13.5px;
   background: var(--glass); color: var(--ink); border: 1px solid var(--line); transition: border-color .2s ease;
