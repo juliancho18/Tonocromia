@@ -134,6 +134,33 @@ button:disabled { opacity: .4; cursor: not-allowed; }
 }
 
 .onb > * { position: relative; z-index: 1; }
+
+/* Words from the survey itself, drifting faintly around the entry screen —
+   a preview of what the app is about, never competing with the logo. */
+.onb-float-words { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+.onb-float-word {
+  position: absolute; font-family: var(--font-label); font-weight: 300; font-size: 11px;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); opacity: 0;
+  animation: float-word 9s ease-in-out infinite;
+}
+@keyframes float-word {
+  0% { opacity: 0; transform: translateY(12px); }
+  15% { opacity: 0.45; }
+  50% { opacity: 0.6; transform: translateY(-8px); }
+  85% { opacity: 0.45; }
+  100% { opacity: 0; transform: translateY(-16px); }
+}
+
+/* Pulses the aura like a beat — a wrapper so the aura's own spin/ring
+   animation (per skin) is untouched. */
+.onb-aura-beat { display: inline-block; animation: beat-pulse 1.15s cubic-bezier(.22,.8,.32,1) infinite; }
+@keyframes beat-pulse {
+  0% { transform: scale(1); }
+  18% { transform: scale(1.16); }
+  45% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
 .onb-back-btn {
   position: absolute; top: 18px; left: 16px; z-index: 2;
   width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
