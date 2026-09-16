@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inria_Serif, Lexend_Zetta, Inter, Unbounded } from "next/font/google";
-import { SkinProvider } from "@/components/skin/SkinProvider";
 import "./globals.css";
 
 const inriaSerif = Inria_Serif({
@@ -37,13 +36,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      data-skin="editorial"
+      data-skin="futurista"
       className={`${inriaSerif.variable} ${lexendZetta.variable} ${inter.variable} ${unbounded.variable}`}
     >
       <body>
-        <SkinProvider>
-          <div id="app-root">{children}</div>
-        </SkinProvider>
+        <div id="app-root">{children}</div>
       </body>
     </html>
   );
