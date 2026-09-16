@@ -11,6 +11,12 @@ export const ALLOWED_AUDIO_EXTENSIONS = [
   "amr", "wma", "aiff", "aif", "3gp", "caf", "mp4",
 ] as const;
 
+// Video containers are accepted too: ffmpeg extracts and transcodes just the
+// audio track, ignoring the video stream.
+export const ALLOWED_VIDEO_EXTENSIONS = [
+  "mov", "avi", "mkv", "wmv", "flv", "m4v",
+] as const;
+
 // Windows/browsers frequently report an empty or wrong `file.type` for these
 // extensions, so the server-side Vercel Blob upload (which checks the actual
 // content type, not the extension) needs an explicit fallback mime per ext.
@@ -31,18 +37,28 @@ const EXTENSION_TO_MIME: Record<string, string> = {
   "3gp": "audio/3gpp",
   caf: "audio/x-caf",
   mp4: "audio/mp4",
+  mov: "video/quicktime",
+  avi: "video/x-msvideo",
+  mkv: "video/x-matroska",
+  wmv: "video/x-ms-wmv",
+  flv: "video/x-flv",
+  m4v: "video/x-m4v",
 };
 
 export function isAllowedAudioFile(file: { name: string; type: string }): boolean {
-  if (file.type.startsWith("audio/")) return true;
+  if (file.type.startsWith("audio/") || file.type.startsWith("video/")) return true;
   const ext = file.name.split(".").pop()?.toLowerCase();
-  return !!ext && (ALLOWED_AUDIO_EXTENSIONS as readonly string[]).includes(ext);
+  return (
+    !!ext &&
+    ((ALLOWED_AUDIO_EXTENSIONS as readonly string[]).includes(ext) ||
+      (ALLOWED_VIDEO_EXTENSIONS as readonly string[]).includes(ext))
+  );
 }
 
 // Resolves the content type to send to Vercel Blob: trust the browser's
-// reported type when it's audio, otherwise fall back to the extension map.
+// reported type when it's audio/video, otherwise fall back to the extension map.
 export function resolveAudioContentType(file: { name: string; type: string }): string {
-  if (file.type.startsWith("audio/")) return file.type;
+  if (file.type.startsWith("audio/") || file.type.startsWith("video/")) return file.type;
   const ext = file.name.split(".").pop()?.toLowerCase();
   return (ext && EXTENSION_TO_MIME[ext]) || "audio/mpeg";
 }

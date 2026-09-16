@@ -20,7 +20,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       body,
       request: req,
       onBeforeGenerateToken: async () => ({
-        allowedContentTypes: ["audio/*"],
+        allowedContentTypes: ["audio/*", "video/*"],
         maximumSizeInBytes: MAX_UPLOAD_SIZE_BYTES,
         addRandomSuffix: true,
       }),

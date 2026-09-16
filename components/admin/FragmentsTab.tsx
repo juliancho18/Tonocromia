@@ -83,7 +83,7 @@ export function FragmentsTab() {
     setError("");
 
     if (!isAllowedAudioFile(file)) {
-      setError("Formato no soportado. Sube un archivo de audio (mp3, wav, m4a, aac, ogg, oga, flac, webm, opus…).");
+      setError("Formato no soportado. Sube un archivo de audio o video (mp3, wav, m4a, aac, ogg, flac, mp4, mov…).");
       return;
     }
     if (file.size > MAX_UPLOAD_SIZE_BYTES) {
@@ -162,7 +162,7 @@ export function FragmentsTab() {
               : "Procesando y comprimiendo audio…"
             : "Arrastra un audio aquí, o toca para elegir un archivo"}
           <input
-            ref={fileInputRef} type="file" accept="audio/*" disabled={uploading}
+            ref={fileInputRef} type="file" accept="audio/*,video/*" disabled={uploading}
             onChange={e => { const file = e.target.files?.[0]; if (file) uploadFile(file); e.target.value = ""; }}
           />
         </div>
