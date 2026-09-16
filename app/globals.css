@@ -415,14 +415,9 @@ input[type=range].vslider::-moz-range-thumb {
 .emotion-row.selected { color: #fff; font-weight: 500; transform: scale(1.06); }
 .emotion-drawer {
   position: absolute; left: 24px; right: 24px; top: 50%; height: 54px; transform: translateY(-50%);
-  background: #111; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); pointer-events: none;
-  border-radius: 14px;
-}
-.emotion-drawer {
-  background: rgba(var(--accent-rgb), 0.1); border: 1px solid transparent;
-  background-image: linear-gradient(rgba(var(--accent-rgb), 0.1), rgba(var(--accent-rgb), 0.1)), linear-gradient(90deg, var(--accent), var(--accent-2));
-  background-origin: border-box; background-clip: padding-box, border-box;
-  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.25);
+  pointer-events: none; border-radius: 14px;
+  background: var(--glass-strong); border: 1px solid rgba(var(--accent-rgb), 0.4);
+  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.2);
 }
 .emotion-row.selected {
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
