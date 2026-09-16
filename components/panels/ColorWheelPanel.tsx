@@ -80,7 +80,11 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
               ref={canvasRef}
               width={150}
               height={150}
-              onPointerDown={e => { draggingRef.current = true; pick(e.clientX, e.clientY); }}
+              onPointerDown={e => {
+                draggingRef.current = true;
+                (e.target as Element).setPointerCapture(e.pointerId);
+                pick(e.clientX, e.clientY);
+              }}
               onPointerMove={e => { if (draggingRef.current) pick(e.clientX, e.clientY); }}
               onPointerUp={() => { draggingRef.current = false; }}
             />
@@ -95,7 +99,10 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
         </div>
         <div className="swatch-preview-row">
           <div className="swatch-preview" style={{ background: hex, boxShadow: `0 6px 20px ${hex}66` }} />
-          <div className="hint-text">toca la rueda para elegir un color</div>
+          <div>
+            <div className="hex-label">{hex.toUpperCase()}</div>
+            <div className="hint-text">toca la rueda para elegir un color</div>
+          </div>
         </div>
         <button className="add-color-btn" disabled={colors.length >= MAX_COLORS} onClick={addColor}>
           {colors.length >= MAX_COLORS ? `Ya elegiste ${MAX_COLORS} colores` : "+ Agregar color a la paleta"}
@@ -103,8 +110,11 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
         <div className="palette-label">Tu paleta para este fragmento ({colors.length}/{MAX_COLORS})</div>
         <div className="chosen-row">
           {colors.map((c, i) => (
-            <div className="chip" key={i} style={{ background: c.hex, boxShadow: `0 4px 14px ${c.hex}55` }}>
-              <button className="rm" onClick={() => removeColor(i)}>✕</button>
+            <div className="chip-wrap" key={i}>
+              <div className="chip" style={{ background: c.hex, boxShadow: `0 4px 14px ${c.hex}55` }}>
+                <button className="rm" onClick={() => removeColor(i)}>✕</button>
+              </div>
+              <div className="chip-hex">{c.hex.toUpperCase()}</div>
             </div>
           ))}
           {Array.from({ length: MAX_COLORS - colors.length }).map((_, i) => (

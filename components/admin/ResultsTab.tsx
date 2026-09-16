@@ -24,6 +24,17 @@ export function ResultsTab() {
     load("");
   }, [load]);
 
+  async function removeParticipant(participantAlias: string) {
+    if (!confirm(`¿Borrar todas las respuestas de "${participantAlias}"? Esta acción no se puede deshacer.`)) return;
+    const res = await fetch("/api/admin/results", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ alias: participantAlias }),
+    });
+    if (!res.ok) { setError("No se pudo borrar el encuestado."); return; }
+    load(alias);
+  }
+
   const byParticipant = new Map<string, AdminResultRow[]>();
   (results ?? []).forEach(row => {
     const list = byParticipant.get(row.alias) ?? [];
@@ -58,14 +69,22 @@ export function ResultsTab() {
       )}
       {!error && [...byParticipant.entries()].map(([participantAlias, rows]) => (
         <div className="participant-card" key={participantAlias}>
-          <div className="pname">{participantAlias}</div>
+          <div className="participant-card-head">
+            <div className="pname">{participantAlias}</div>
+            <button className="frag-delete-btn" onClick={() => removeParticipant(participantAlias)}>Borrar</button>
+          </div>
           {rows.map(r => (
             <div className="frag-result-row" key={r.fragment_id}>
               <div className="frag-result-head">
                 <b>{r.fragment_label ?? r.fragment_id}</b>
                 <div className="swatches">
                   {r.colors.length
-                    ? r.colors.map((c, i) => <span key={i} title={c.hex} style={{ background: c.hex }} />)
+                    ? r.colors.map((c, i) => (
+                        <span key={i} className="swatch-with-hex">
+                          <span className="swatch" style={{ background: c.hex }} />
+                          <span className="swatch-hex">{c.hex.toUpperCase()}</span>
+                        </span>
+                      ))
                     : <span className="swatch-empty" title="Sin color" />}
                 </div>
               </div>

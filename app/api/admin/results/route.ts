@@ -27,3 +27,19 @@ export async function GET(req: NextRequest) {
       `;
   return NextResponse.json(rows);
 }
+
+export async function DELETE(req: NextRequest) {
+  const token = req.cookies.get("tonocromia_admin")?.value;
+  if (!token || !verifySession(token, process.env.ADMIN_SESSION_SECRET!)) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+  await ensureSchema();
+  const { alias } = await req.json();
+  if (!alias || typeof alias !== "string") {
+    return NextResponse.json({ error: "Falta el apodo del encuestado." }, { status: 400 });
+  }
+  // responses.submission_id has ON DELETE CASCADE, so this also removes every
+  // response tied to this participant's submission(s).
+  await sql`delete from submissions where alias = ${alias}`;
+  return NextResponse.json({ ok: true });
+}
