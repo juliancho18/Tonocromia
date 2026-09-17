@@ -56,16 +56,14 @@ export function EmotionWheelPicker({ value, onChange, onClose }: EmotionWheelPic
   }
 
   function selectEmotion(idx: number) {
-    // Set the selection immediately from the tap itself, instead of only
-    // relying on the scroll settling — on mobile the smooth-scroll's own
-    // scroll events don't always land exactly on the snap point in time.
-    // The jump is instant (not "smooth") on purpose: an animated scroll on
-    // every tap made the list feel like it was constantly moving underneath
-    // the user's finger while they were trying to fill out the form.
+    // A direct tap just selects — it does NOT move the list. Auto-scrolling
+    // the tapped row into the center (whether animated or instant) yanked
+    // the whole list out from under the user's finger, which read as the
+    // screen "moving on its own" while filling out the form. Scrolling the
+    // list to browse still updates the selection via the drawer (below).
     if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
     setSelected(EMOTIONS[idx]);
     onChange(EMOTIONS[idx]);
-    rowRefs.current[idx]?.scrollIntoView({ block: "center" });
   }
 
   return (
