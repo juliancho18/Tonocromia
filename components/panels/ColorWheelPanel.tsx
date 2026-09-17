@@ -21,13 +21,13 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const cx = 75, cy = 75, radius = 73;
-    const img = ctx.createImageData(150, 150);
-    for (let y = 0; y < 150; y++) {
-      for (let x = 0; x < 150; x++) {
+    const cx = 84, cy = 84, radius = 82;
+    const img = ctx.createImageData(168, 168);
+    for (let y = 0; y < 168; y++) {
+      for (let x = 0; x < 168; x++) {
         const dx = x - cx, dy = y - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const idx = (y * 150 + x) * 4;
+        const idx = (y * 168 + x) * 4;
         if (dist > radius) { img.data[idx + 3] = 0; continue; }
         let hue = (Math.atan2(dy, dx) * 180) / Math.PI;
         if (hue < 0) hue += 360;
@@ -45,9 +45,10 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
   function pick(clientX: number, clientY: number) {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const cx = 75, cy = 75, radius = 73;
+    const cx = 84, cy = 84, radius = 82;
     const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left - cx, y = clientY - rect.top - cy;
+    const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    const x = (clientX - rect.left) * scaleX - cx, y = (clientY - rect.top) * scaleY - cy;
     let dist = Math.sqrt(x * x + y * y);
     if (dist > radius) dist = radius;
     let angle = (Math.atan2(y, x) * 180) / Math.PI;
@@ -78,8 +79,8 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
             <canvas
               id="wheel"
               ref={canvasRef}
-              width={150}
-              height={150}
+              width={168}
+              height={168}
               onPointerDown={e => {
                 draggingRef.current = true;
                 (e.target as Element).setPointerCapture(e.pointerId);
