@@ -27,7 +27,7 @@ export function Sheet({ open, type, response, onUpdate, onClose }: SheetProps) {
   return (
     <>
       <div className={`sheet-backdrop ${open ? "open" : ""} ${isLight ? "backdrop-light" : ""}`} onClick={onClose} />
-      <div className={`sheet ${open ? "open" : ""} ${isLight ? "sheet-light" : ""} ${type === "emotion" ? "no-title" : ""}`}>
+      <div className={`sheet ${open ? "open" : ""} ${isLight ? "sheet-light" : ""} ${type === "emotion" ? "no-title" : ""} ${type === "color" ? "color-sheet" : ""}`}>
         {response && type === "color" && (
           <ColorWheelPanel colors={response.colors} onChange={colors => onUpdate({ colors })} onClose={onClose} />
         )}
