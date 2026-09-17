@@ -190,7 +190,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
    in both skins, since it's not part of the color-perception exercise. */
 .onb-aura {
   background: conic-gradient(from 0deg, #ff3b30, #ff9500, #ffcc00, #34c759, #30b0c7, #007aff, #af52de, #ff3b30);
-  filter: blur(12px); opacity: 0.55;
+  filter: blur(4px) saturate(1.3); opacity: 0.95;
   animation: spin 7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
