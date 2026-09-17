@@ -402,10 +402,15 @@ input[type=range].vslider::-moz-range-thumb {
   background: #0d0c11; color: #fff; border: 1px solid rgba(255,255,255,0.2); font-size: 10px;
 }
 .color-panel-body { flex: 1; min-height: 0; overflow-y: auto; padding: 0 24px; }
-.sheet.color-sheet { justify-content: center; }
-.sheet.color-sheet .color-panel-body { flex: 0 1 auto; overflow-y: visible; padding-top: 12px; }
-.sheet.color-sheet .wheel-row { margin-top: 8px; }
-.sheet.color-sheet .sheet-save-btn { margin-top: 28px; }
+/* The title stays pinned at the top like every other panel; the wheel,
+   preview, palette and save button live together as one flex column that's
+   centered in the remaining space, so they read as a single balanced block
+   instead of the wheel sticking to the top and the button to the bottom. */
+.sheet.color-sheet .color-panel-body {
+  display: flex; flex-direction: column; justify-content: center; align-items: stretch;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+.sheet.color-sheet .color-panel-body .sheet-save-btn { margin: 24px 0 0; }
 
 /* Emotion / texture lists */
 .sheet-light .sheet-title {

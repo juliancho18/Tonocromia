@@ -9,7 +9,6 @@ interface EmotionWheelPickerProps {
   onClose: () => void;
 }
 
-const ROW_HEIGHT = 54;
 // Mobile (iOS Safari especially) keeps firing scroll events with a
 // not-yet-settled scrollTop during snap momentum, so reading the centered
 // row on every frame picks the wrong one. Waiting until scrolling has
@@ -22,24 +21,33 @@ const SETTLE_DELAY = 120;
 export function EmotionWheelPicker({ value, onChange, onClose }: EmotionWheelPickerProps) {
   const [selected, setSelected] = useState<string | null>(value);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement | null>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const settleTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
-    const container = scrollRef.current;
     const idx = value ? EMOTIONS.indexOf(value as (typeof EMOTIONS)[number]) : -1;
-    if (container && idx >= 0) {
-      container.scrollTop = idx * ROW_HEIGHT;
-    }
+    const row = idx >= 0 ? rowRefs.current[idx] : null;
+    row?.scrollIntoView({ block: "center" });
   }, [value]);
 
+  // Measures against the real, rendered positions of the drawer and the rows
+  // instead of assuming a fixed row height — that assumption drifted from the
+  // actual layout on some mobile browsers and left the wrong row selected.
   function commitFromScroll() {
-    const container = scrollRef.current;
-    if (!container) return;
-    const centerY = container.scrollTop + container.clientHeight / 2;
-    const idx = Math.max(0, Math.min(EMOTIONS.length - 1, Math.round(centerY / ROW_HEIGHT - 0.5)));
-    setSelected(EMOTIONS[idx]);
-    onChange(EMOTIONS[idx]);
+    const drawer = drawerRef.current;
+    if (!drawer) return;
+    const drawerCenter = drawer.getBoundingClientRect().top + drawer.getBoundingClientRect().height / 2;
+    let closestIdx = 0;
+    let closestDist = Infinity;
+    rowRefs.current.forEach((row, i) => {
+      if (!row) return;
+      const rect = row.getBoundingClientRect();
+      const dist = Math.abs(rect.top + rect.height / 2 - drawerCenter);
+      if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+    });
+    setSelected(EMOTIONS[closestIdx]);
+    onChange(EMOTIONS[closestIdx]);
   }
 
   function handleScroll() {
@@ -54,14 +62,14 @@ export function EmotionWheelPicker({ value, onChange, onClose }: EmotionWheelPic
     if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
     setSelected(EMOTIONS[idx]);
     onChange(EMOTIONS[idx]);
-    scrollRef.current?.scrollTo({ top: idx * ROW_HEIGHT, behavior: "smooth" });
+    rowRefs.current[idx]?.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 
   return (
     <>
       <button className="sheet-close" onClick={onClose}>✕</button>
       <div className="emotion-wheel">
-        <div className="emotion-drawer" aria-hidden="true" />
+        <div className="emotion-drawer" ref={drawerRef} aria-hidden="true" />
         <div className="emotion-wheel-scroll" ref={scrollRef} onScroll={handleScroll}>
           <div className="emotion-wheel-pad" />
           {EMOTIONS.map((em, i) => (

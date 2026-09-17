@@ -122,10 +122,10 @@ export function ColorWheelPanel({ colors, onChange, onClose }: ColorWheelPanelPr
             <div className="chip chip-empty" key={`empty-${i}`} />
           ))}
         </div>
+        <button className={`sheet-save-btn ${colors.length > 0 ? "ready" : ""}`} disabled={colors.length === 0} onClick={onClose}>
+          Guardar paleta
+        </button>
       </div>
-      <button className={`sheet-save-btn ${colors.length > 0 ? "ready" : ""}`} disabled={colors.length === 0} onClick={onClose}>
-        Guardar paleta
-      </button>
     </>
   );
 }
