@@ -175,10 +175,11 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   color: var(--muted); font-size: 15px; line-height: 1.6; margin: 0; max-width: 320px;
 }
 .onb .logo { font-family: var(--wordmark-font); font-size: 34px; letter-spacing: 0.01em; }
-[data-skin="editorial"] .logo .logo-bold { font-weight: 700; }
-[data-skin="editorial"] .logo .logo-light { font-weight: 300; font-style: italic; }
+/* Same typography in Claro and Oscuro — only the colors differ */
+.logo .logo-bold { font-weight: 700; }
+.logo .logo-light { font-weight: 300; font-style: italic; }
+[data-skin="futurista"] .onb .logo { font-family: var(--font-display); }
 [data-skin="futurista"] .logo {
-  font-weight: 800;
   background: linear-gradient(90deg, #ffffff, var(--accent) 40%, var(--accent-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -186,7 +187,7 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   font-family: var(--font-display); font-weight: 300; font-style: normal;
   color: var(--ink); font-size: 16px; margin: 0; max-width: 320px;
 }
-[data-skin="futurista"] .onb-subtitle { font-family: var(--font-body); color: var(--muted); letter-spacing: 0.02em; }
+[data-skin="futurista"] .onb-subtitle { color: var(--muted); }
 
 .onb-aura {
   width: 110px; height: 110px; border-radius: 50%; margin: 18px auto 0;
