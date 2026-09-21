@@ -8,10 +8,10 @@ export function SkinToggle() {
     <div className="skin-toggle" role="group" aria-label="Elegir estilo visual">
       <div className={`thumb ${skin === "futurista" ? "on-futurista" : ""}`} />
       <button type="button" className={skin === "editorial" ? "active" : ""} onClick={() => setSkin("editorial")}>
-        Editorial
+        Claro
       </button>
       <button type="button" className={skin === "futurista" ? "active" : ""} onClick={() => setSkin("futurista")}>
-        Futurista
+        Oscuro
       </button>
     </div>
   );

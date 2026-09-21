@@ -92,9 +92,15 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   z-index: 0;
 }
 [data-skin="futurista"] .skin-toggle .thumb.on-futurista {
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  background: #fff;
   transform: translateX(100%);
 }
+/* Oscuro: same typography/shape, black/white scale inverted */
+[data-skin="futurista"] .skin-toggle { background: #171512; border-color: #171512; }
+[data-skin="futurista"] .skin-toggle button { color: rgba(255,255,255,.6); }
+[data-skin="futurista"] .skin-toggle button.active { color: #171512; }
+/* Sit centered between the color wheel and the Continuar button */
+.onb-mid .skin-toggle { margin-top: 14px; }
 
 /* ---------- Onboarding ---------- */
 .onb {
