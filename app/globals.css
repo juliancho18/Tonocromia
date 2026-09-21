@@ -243,6 +243,9 @@ button:disabled { opacity: .4; cursor: not-allowed; }
   font-size: 29px; line-height: 1.14; letter-spacing: 0.01em; text-transform: uppercase;
   display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 14px;
 }
+/* Smaller counter; the full "AUDIO" word sits in the top-right corner */
+.audio-header .audio-counter { font-size: 16px; }
+.audio-header .audio-word { font-size: 12px; white-space: nowrap; margin-left: auto; }
 .audio-back-btn {
   width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   background: rgba(0,0,0,0.06); color: var(--ink); font-size: 16px; flex-shrink: 0;

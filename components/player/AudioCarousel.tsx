@@ -119,8 +119,8 @@ export function AudioCarousel({ fragments, responses, onOpenPanel, onSend, onBac
     <div className="audio-carousel">
       <div className="audio-header">
         <button className="audio-back-btn" onClick={onBack} aria-label="Volver">←</button>
-        <div>{hasFragments ? `${displayedIndex + 1}/${n}` : "0/0"}</div>
-        <div>AUDIO</div>
+        <div className="audio-counter">{hasFragments ? `${displayedIndex + 1}/${n}` : "0/0"}</div>
+        <div className="audio-word">AUDIO</div>
       </div>
       <div className="audio-icons">
         <button
