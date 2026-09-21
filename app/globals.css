@@ -538,6 +538,8 @@ input[type=range].vslider::-moz-range-thumb {
   border: 1px solid var(--line); border-radius: 999px; transition: border-color .2s ease, background .2s ease;
 }
 .admin-back:hover { border-color: var(--accent-2); background: rgba(var(--accent-2-rgb), 0.1); }
+.admin-header-actions { display: flex; align-items: center; gap: 8px; }
+button.admin-back { background: none; cursor: pointer; font-family: inherit; }
 
 .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; padding: 4px; background: var(--glass); border: 1px solid var(--line); border-radius: 14px; }
 .admin-tab-btn {
@@ -583,7 +585,7 @@ input[type=range].vslider::-moz-range-thumb {
 .dropzone.disabled { cursor: default; opacity: 0.7; }
 .dropzone input[type=file] { display: none; }
 
-.frag-manage-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.frag-manage-row { display: flex; align-items: center; gap: 10px; padding: 14px 16px 14px 26px; border-bottom: 1px solid var(--line); }
 .frag-manage-row:last-child { border-bottom: none; }
 .frag-manage-label { flex: 1; font-size: 14px; min-width: 0; }
 .frag-manage-label input {
